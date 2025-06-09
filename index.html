@@ -1,217 +1,247 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ghi điểm</title>
-  <style>
-    :root {
-      --bg: #fafafa;
-      --text: #222;
-      --card: #fff;
-      --input: #f9f9f9;
-      --positive: #27ae60;
-      --negative: #c0392b;
-    }
-    body.dark {
-      --bg: #111;
-      --text: #eee;
-      --card: #1e1e1e;
-      --input: #2a2a2a;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      padding: 1rem;
-      transition: background 0.3s, color 0.3s;
-    }
-    h1 {
-      text-align: center;
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-      letter-spacing: 1px;
-    }
-    .card {
-      background: var(--card);
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    label {
-      font-size: 0.9rem;
-      margin-bottom: 0.2rem;
-      display: block;
-    }
-    input[type="text"], input[type="number"] {
-      width: 100%;
-      padding: 0.6rem;
-      font-size: 1rem;
-      border: 1px solid #444;
-      border-radius: 8px;
-      margin-bottom: 0.8rem;
-      background: var(--input);
-      color: var(--text);
-    }
-    .avatar-row {
-      display: flex;
-      justify-content: space-around;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
-    }
-    .avatar {
-      text-align: center;
-      margin: 0.5rem;
-    }
-    .avatar img {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      margin-bottom: 0.3rem;
-    }
-    .name-score {
-      font-weight: bold;
-    }
-    .positive {
-      color: var(--positive);
-    }
-    .negative {
-      color: var(--negative);
-    }
-    button {
-      width: 100%;
-      padding: 0.75rem;
-      font-size: 1rem;
-      border: none;
-      border-radius: 10px;
-      background-color: #333;
-      color: white;
-      margin-top: 0.5rem;
-    }
-    button:hover {
-      background-color: #555;
-    }
-    .error {
-      color: #e74c3c;
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      padding: 8px;
-      border: 1px solid #ccc;
-      text-align: center;
-    }
-    #darkToggle {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      padding: 0.3rem 0.6rem;
-      font-size: 0.9rem;
-      background: #444;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghi Điểm Đánh Bài</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        body.dark-mode {
+            background-color: #222;
+            color: #ddd;
+        }
+        .container {
+            max-width: 100%;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .toggle-mode {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .toggle-mode:hover {
+            background: #0056b3;
+        }
+        .player-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .player-card {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        body.dark-mode .player-card {
+            background: #333;
+            box-shadow: 0 2px 4px rgba(255,255,255,0.1);
+        }
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #ccc;
+            margin: 0 auto 10px;
+        }
+        .total-score {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .positive {
+            color: #28a745;
+        }
+        .negative {
+            color: #dc3545;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        body.dark-mode input {
+            background: #444;
+            color: #ddd;
+            border-color: #555;
+        }
+        .score-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background: #218838;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        body.dark-mode th, body.dark-mode td {
+            border-color: #555;
+        }
+        th {
+            background: #007bff;
+            color: white;
+        }
+        body.dark-mode th {
+            background: #0056b3;
+        }
+        @media (max-width: 600px) {
+            .player-inputs, .score-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-<button id="darkToggle" onclick="toggleDark()">🌙</button>
-<h1>🃏 Ghi điểm</h1>
+    <div class="container">
+        <div class="header">
+            <h1>Ghi Điểm Đánh Bài</h1>
+            <button class="toggle-mode" onclick="toggleDarkMode()">Dark Mode</button>
+        </div>
+        <div class="player-inputs">
+            <div class="player-card">
+                <div class="avatar"></div>
+                <input type="text" id="player1" placeholder="Tên người chơi 1" onchange="updateName(1)">
+                <div id="total1" class="total-score">0</div>
+            </div>
+            <div class="player-card">
+                <div class="avatar"></div>
+                <input type="text" id="player2" placeholder="Tên người chơi 2" onchange="updateName(2)">
+                <div id="total2" class="total-score">0</div>
+            </div>
+            <div class="player-card">
+                <div class="avatar"></div>
+                <input type="text" id="player3" placeholder="Tên người chơi 3" onchange="updateName(3)">
+                <div id="total3" class="total-score">0</div>
+            </div>
+            <div class="player-card">
+                <div class="avatar"></div>
+                <input type="text" id="player4" placeholder="Tên người chơi 4" onchange="updateName(4)">
+                <div id="total4" class="total-score">0</div>
+            </div>
+        </div>
+        <div class="score-inputs">
+            <div>
+                <input type="number" id="score1" placeholder="Điểm người chơi 1">
+            </div>
+            <div>
+                <input type="number" id="score2" placeholder="Điểm người chơi 2">
+            </div>
+            <div>
+                <input type="number" id="score3" placeholder="Điểm người chơi 3">
+            </div>
+            <div>
+                <input type="number" id="score4" placeholder="Điểm người chơi 4">
+            </div>
+        </div>
+        <button onclick="addScores()">Thêm Ván</button>
+        <table id="history">
+            <thead>
+                <tr>
+                    <th>Ván</th>
+                    <th id="name1">Người chơi 1</th>
+                    <th id="name2">Người chơi 2</th>
+                    <th id="name3">Người chơi 3</th>
+                    <th id="name4">Người chơi 4</th>
+                </tr>
+            </thead>
+            <tbody id="history-body"></tbody>
+        </table>
+    </div>
+    <script>
+        let players = ['', '', '', ''];
+        let totals = [0, 0, 0, 0];
+        let history = [];
 
-<div class="card" id="setup">
-  <label>Người 1</label><input id="p1" type="text">
-  <label>Người 2</label><input id="p2" type="text">
-  <label>Người 3</label><input id="p3" type="text">
-  <label>Người 4</label><input id="p4" type="text">
-  <button onclick="start()">Bắt đầu</button>
-  <div class="error" id="nameErr"></div>
-</div>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            document.querySelector('.toggle-mode').textContent = 
+                document.body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
+        }
 
-<div class="card" id="input" style="display:none;">
-  <div class="avatar-row" id="avatars"></div>
-  <div id="scoreFields"></div>
-  <button onclick="save()">Lưu ván</button>
-  <div class="error" id="scoreErr"></div>
-</div>
+        function updateName(index) {
+            const input = document.getElementById(`player${index}`);
+            const name = input.value.trim();
+            const otherNames = players.filter((n, i) => i !== index - 1 && n !== '');
+            if (name && otherNames.includes(name)) {
+                alert('Tên người chơi đã tồn tại!');
+                input.value = players[index - 1];
+                return;
+            }
+            players[index - 1] = name;
+            document.getElementById(`name${index}`).textContent = name || `Người chơi ${index}`;
+        }
 
-<div class="card" id="history" style="display:none;">
-  <h2 style="font-size:1.2rem; margin-bottom: 0.5rem;">Lịch sử</h2>
-  <table id="log"></table>
-</div>
+        function addScores() {
+            const scores = [
+                parseInt(document.getElementById('score1').value) || 0,
+                parseInt(document.getElementById('score2').value) || 0,
+                parseInt(document.getElementById('score3').value) || 0,
+                parseInt(document.getElementById('score4').value) || 0
+            ];
+            history.push(scores);
+            for (let i = 0; i < 4; i++) {
+                totals[i] += scores[i];
+                const totalEl = document.getElementById(`total${i + 1}`);
+                totalEl.textContent = totals[i];
+                totalEl.className = 'total-score ' + (totals[i] > 0 ? 'positive' : totals[i] < 0 ? 'negative' : '');
+            }
+            updateHistory();
+            document.getElementById('score1').value = '';
+            document.getElementById('score2').value = '';
+            document.getElementById('score3').value = '';
+            document.getElementById('score4').value = '';
+        }
 
-<script>
-let names = [], total = [0,0,0,0];
-
-function toggleDark() {
-  document.body.classList.toggle('dark');
-}
-
-function start() {
-  names = [p1.value.trim(), p2.value.trim(), p3.value.trim(), p4.value.trim()];
-  if (names.includes("") || new Set(names).size < 4) {
-    nameErr.innerText = "Tên không được để trống hoặc trùng nhau.";
-    return;
-  }
-  nameErr.innerText = "";
-  setup.style.display = "none";
-  input.style.display = "block";
-  history.style.display = "block";
-
-  avatars.innerHTML = "";
-  scoreFields.innerHTML = "";
-
-  names.forEach((n, i) => {
-    const seed = encodeURIComponent(n);
-    avatars.innerHTML += `
-      <div class="avatar">
-        <img src="https://api.dicebear.com/7.x/thumbs/svg?seed=${seed}" alt="">
-        <div class="name-score">${n}<br><span id="total${i}" class="positive">0</span></div>
-      </div>
-    `;
-    scoreFields.innerHTML += `
-      <label>${n}</label>
-      <input type="number" id="s${i}" placeholder="Nhập điểm">
-    `;
-  });
-
-  log.innerHTML = `<tr>${names.map(n => `<th>${n}</th>`).join('')}</tr>`;
-}
-
-function save() {
-  let s = [], sum = 0;
-  for (let i = 0; i < 4; i++) {
-    const val = parseInt(document.getElementById("s" + i).value);
-    if (isNaN(val)) {
-      scoreErr.innerText = "Nhập đầy đủ điểm!";
-      return;
-    }
-    s[i] = val;
-    sum += val;
-  }
-  if (sum !== 0) {
-    scoreErr.innerText = "Tổng điểm phải bằng 0.";
-    return;
-  }
-
-  for (let i = 0; i < 4; i++) {
-    total[i] += s[i];
-    const el = document.getElementById("total" + i);
-    el.innerText = total[i];
-    el.className = total[i] >= 0 ? 'positive' : 'negative';
-  }
-
-  let row = `<tr>${s.map(v => `<td class="${v >= 0 ? 'positive' : 'negative'}">${v}</td>`).join('')}</tr>`;
-  log.innerHTML += row;
-  for (let i = 0; i < 4; i++) document.getElementById("s" + i).value = "";
-  scoreErr.innerText = "";
-}
-</script>
+        function updateHistory() {
+            const tbody = document.getElementById('history-body');
+            tbody.innerHTML = '';
+            history.forEach((scores, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${index + 1}</td>` + 
+                    scores.map(score => `<td class="${score > 0 ? 'positive' : score < 0 ? 'negative' : ''}">${score}</td>`).join('');
+                tbody.appendChild(row);
+            });
+        }
+    </script>
 </body>
 </html>
