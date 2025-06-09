@@ -3,15 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ghi điểm v1</title>
+  <title>Ghi điểm</title>
   <style>
+    :root {
+      --bg: #fafafa;
+      --text: #222;
+      --card: #fff;
+      --input: #f9f9f9;
+      --positive: #27ae60;
+      --negative: #c0392b;
+    }
+    body.dark {
+      --bg: #111;
+      --text: #eee;
+      --card: #1e1e1e;
+      --input: #2a2a2a;
+    }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: #fafafa;
-      color: #222;
+      background: var(--bg);
+      color: var(--text);
       padding: 1rem;
+      transition: background 0.3s, color 0.3s;
     }
     h1 {
       text-align: center;
@@ -20,7 +35,7 @@
       letter-spacing: 1px;
     }
     .card {
-      background: #fff;
+      background: var(--card);
       padding: 1rem;
       margin-bottom: 1.5rem;
       border-radius: 12px;
@@ -35,24 +50,36 @@
       width: 100%;
       padding: 0.6rem;
       font-size: 1rem;
-      border: 1px solid #ddd;
+      border: 1px solid #444;
       border-radius: 8px;
       margin-bottom: 0.8rem;
-      background: #f9f9f9;
+      background: var(--input);
+      color: var(--text);
     }
     .avatar-row {
       display: flex;
       justify-content: space-around;
       margin-bottom: 1rem;
+      flex-wrap: wrap;
     }
     .avatar {
       text-align: center;
+      margin: 0.5rem;
     }
     .avatar img {
       width: 56px;
       height: 56px;
       border-radius: 50%;
       margin-bottom: 0.3rem;
+    }
+    .name-score {
+      font-weight: bold;
+    }
+    .positive {
+      color: var(--positive);
+    }
+    .negative {
+      color: var(--negative);
     }
     button {
       width: 100%;
@@ -68,23 +95,34 @@
       background-color: #555;
     }
     .error {
-      color: #d63031;
+      color: #e74c3c;
       font-size: 0.9rem;
       margin-top: 0.5rem;
     }
-    .history {
-      font-size: 0.95rem;
-      line-height: 1.4;
+    table {
+      width: 100%;
+      border-collapse: collapse;
     }
-    .history-item {
-      border-top: 1px solid #eee;
-      padding-top: 0.6rem;
-      margin-top: 0.6rem;
+    th, td {
+      padding: 8px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+    #darkToggle {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.9rem;
+      background: #444;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
     }
   </style>
 </head>
 <body>
-
+<button id="darkToggle" onclick="toggleDark()">🌙</button>
 <h1>🃏 Ghi điểm</h1>
 
 <div class="card" id="setup">
@@ -105,11 +143,15 @@
 
 <div class="card" id="history" style="display:none;">
   <h2 style="font-size:1.2rem; margin-bottom: 0.5rem;">Lịch sử</h2>
-  <div class="history" id="log"></div>
+  <table id="log"></table>
 </div>
 
 <script>
 let names = [], total = [0,0,0,0];
+
+function toggleDark() {
+  document.body.classList.toggle('dark');
+}
 
 function start() {
   names = [p1.value.trim(), p2.value.trim(), p3.value.trim(), p4.value.trim()];
@@ -130,14 +172,16 @@ function start() {
     avatars.innerHTML += `
       <div class="avatar">
         <img src="https://api.dicebear.com/7.x/thumbs/svg?seed=${seed}" alt="">
-        <div>${n}</div>
+        <div class="name-score">${n}<br><span id="total${i}" class="positive">0</span></div>
       </div>
     `;
     scoreFields.innerHTML += `
       <label>${n}</label>
-      <input type="number" id="s${i}" value="0">
+      <input type="number" id="s${i}" placeholder="Nhập điểm">
     `;
   });
+
+  log.innerHTML = `<tr>${names.map(n => `<th>${n}</th>`).join('')}</tr>`;
 }
 
 function save() {
@@ -156,18 +200,18 @@ function save() {
     return;
   }
 
-  for (let i = 0; i < 4; i++) total[i] += s[i];
-  let html = `<div class="history-item">`;
   for (let i = 0; i < 4; i++) {
-    html += `<b>${names[i]}</b>: ${s[i]} | Tổng: ${total[i]}<br>`;
+    total[i] += s[i];
+    const el = document.getElementById("total" + i);
+    el.innerText = total[i];
+    el.className = total[i] >= 0 ? 'positive' : 'negative';
   }
-  html += `</div>`;
-  log.innerHTML = html + log.innerHTML;
 
-  for (let i = 0; i < 4; i++) document.getElementById("s" + i).value = "0";
+  let row = `<tr>${s.map(v => `<td class="${v >= 0 ? 'positive' : 'negative'}">${v}</td>`).join('')}</tr>`;
+  log.innerHTML += row;
+  for (let i = 0; i < 4; i++) document.getElementById("s" + i).value = "";
   scoreErr.innerText = "";
 }
 </script>
-
 </body>
 </html>
