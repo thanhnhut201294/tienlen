@@ -1,200 +1,210 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ghi điểm Tiến Lên</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to bottom right, #ffefba, #ffffff);
+      margin: 0;
+      padding: 1rem;
+      background: #f2f2f2;
       color: #333;
-      padding: 20px;
-      max-width: 800px;
-      margin: auto;
     }
-    h2, h3 { text-align: center; }
-    input[type="text"], input[type="number"] {
-      padding: 8px;
-      margin: 5px;
-      width: 150px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
     }
-    button {
-      margin: 10px 5px;
-      padding: 10px 20px;
-      background-color: #0078d7;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #005a9e;
-    }
-    table {
-      border-collapse: collapse;
-      margin-top: 20px;
-      width: 100%;
-      background-color: white;
+    .player-setup, .score-input, .history {
+      background: #fff;
       border-radius: 10px;
-      overflow: hidden;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    th, td {
+    label {
+      display: block;
+      margin: 0.5rem 0 0.25rem;
+    }
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 0.5rem;
+      border-radius: 8px;
       border: 1px solid #ccc;
-      padding: 10px;
+      font-size: 1rem;
+    }
+    .avatar-row {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 1rem;
+    }
+    .avatar {
       text-align: center;
     }
-    th {
-      background-color: #f2f2f2;
+    .avatar img {
+      border-radius: 50%;
+      width: 64px;
+      height: 64px;
+      margin-bottom: 0.25rem;
+    }
+    .score-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    button {
+      background: #00b894;
+      color: #fff;
+      border: none;
+      padding: 0.75rem;
+      width: 100%;
+      font-size: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+    button:hover {
+      background: #019875;
     }
     .error {
       color: red;
-      margin-top: 10px;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
     }
-    .avatar {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      margin-right: 6px;
-      vertical-align: middle;
+    .history-item {
+      border-top: 1px solid #ccc;
+      padding-top: 0.5rem;
+      margin-top: 0.5rem;
+      font-size: 0.95rem;
+    }
+    @media (min-width: 768px) {
+      .score-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
     }
   </style>
 </head>
 <body>
-  <h2>🃏 Ghi điểm đánh bài Tiến Lên</h2>
 
-  <div id="playerInput">
-    <p><strong>Nhập tên 4 người chơi (không trùng):</strong></p>
-    <input type="text" id="name0" placeholder="Người 1">
-    <input type="text" id="name1" placeholder="Người 2">
-    <input type="text" id="name2" placeholder="Người 3">
-    <input type="text" id="name3" placeholder="Người 4">
-    <br>
-    <button onclick="startGame()">Bắt đầu</button>
-  </div>
+<h1>🃏 Ghi điểm Tiến Lên</h1>
 
-  <div id="gameArea" style="display:none;">
-    <h3>Nhập điểm từng ván (Tổng điểm = 0)</h3>
-    <div id="scoreInputs"></div>
-    <button onclick="addRound()">Thêm ván</button>
-    <button onclick="resetGame()">Reset</button>
-    <div class="error" id="errorMsg"></div>
+<div class="player-setup">
+  <h2>1. Nhập tên người chơi</h2>
+  <label>Người 1:</label>
+  <input type="text" id="player1" />
+  <label>Người 2:</label>
+  <input type="text" id="player2" />
+  <label>Người 3:</label>
+  <input type="text" id="player3" />
+  <label>Người 4:</label>
+  <input type="text" id="player4" />
+  <button onclick="startGame()">Bắt đầu</button>
+  <div class="error" id="nameError"></div>
+</div>
 
-    <h3>Bảng điểm hiện tại</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Người chơi</th>
-          <th>Điểm</th>
-        </tr>
-      </thead>
-      <tbody id="scoreTable"></tbody>
-    </table>
+<div class="score-input" style="display:none;">
+  <h2>2. Nhập điểm từng ván</h2>
+  <div class="avatar-row" id="avatarRow"></div>
+  <div class="score-grid" id="scoreInputs"></div>
+  <button onclick="submitScores()">Lưu điểm</button>
+  <div class="error" id="scoreError"></div>
+</div>
 
-    <h3>Lịch sử từng ván</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Ván</th>
-          <th>Chi tiết điểm</th>
-        </tr>
-      </thead>
-      <tbody id="historyTable"></tbody>
-    </table>
-  </div>
+<div class="history" style="display:none;">
+  <h2>Lịch sử ván chơi</h2>
+  <div id="historyLog"></div>
+</div>
 
-  <audio id="ding" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+<audio id="successSound" src="https://www.soundjay.com/buttons/sounds/button-09.mp3"></audio>
 
-  <script>
-    let players = ["", "", "", ""];
-    let scores = [0, 0, 0, 0];
-    let history = [];
+<script>
+  let players = [];
+  let totalScores = [0,0,0,0];
+  const avatars = [];
 
-    function startGame() {
-      let names = [];
-      for (let i = 0; i < 4; i++) {
-        const name = document.getElementById("name" + i).value.trim();
-        if (!name) {
-          alert("Vui lòng nhập đủ tên 4 người chơi.");
-          return;
-        }
-        if (names.includes(name)) {
-          alert("Không được nhập trùng tên!");
-          return;
-        }
-        names.push(name);
-        players[i] = name;
-      }
+  function startGame() {
+    const names = [
+      document.getElementById("player1").value.trim(),
+      document.getElementById("player2").value.trim(),
+      document.getElementById("player3").value.trim(),
+      document.getElementById("player4").value.trim()
+    ];
 
-      document.getElementById("playerInput").style.display = "none";
-      document.getElementById("gameArea").style.display = "block";
-
-      const container = document.getElementById("scoreInputs");
-      container.innerHTML = "";
-      for (let i = 0; i < 4; i++) {
-        container.innerHTML += `
-          <label><img class="avatar" src="https://api.dicebear.com/7.x/thumbs/svg?seed=${players[i]}"> ${players[i]}:</label>
-          <input type="number" id="round${i}" value="0"><br>
-        `;
-      }
-
-      updateTable();
+    const nameSet = new Set(names);
+    if (names.includes("") || nameSet.size < 4) {
+      document.getElementById("nameError").innerText = "Tên không được để trống hoặc trùng nhau!";
+      return;
     }
 
-    function addRound() {
-      const ding = document.getElementById("ding");
-      let roundScores = [];
-      let total = 0;
-      for (let i = 0; i < 4; i++) {
-        const val = parseInt(document.getElementById("round" + i).value, 10);
-        if (isNaN(val)) {
-          document.getElementById("errorMsg").innerText = "Điểm không hợp lệ. Vui lòng nhập số.";
-          return;
-        }
-        roundScores[i] = val;
-        total += val;
-      }
+    players = names;
+    document.querySelector(".player-setup").style.display = "none";
+    document.querySelector(".score-input").style.display = "block";
+    document.querySelector(".history").style.display = "block";
 
-      if (total !== 0) {
-        document.getElementById("errorMsg").innerText = "Tổng điểm của 4 người phải bằng 0!";
+    const avatarRow = document.getElementById("avatarRow");
+    const scoreInputs = document.getElementById("scoreInputs");
+    avatarRow.innerHTML = "";
+    scoreInputs.innerHTML = "";
+
+    players.forEach((name, idx) => {
+      const seed = encodeURIComponent(name);
+      avatars[idx] = `https://api.dicebear.com/7.x/thumbs/svg?seed=${seed}`;
+      avatarRow.innerHTML += `
+        <div class="avatar">
+          <img src="${avatars[idx]}" alt="${name}">
+          <div>${name}</div>
+        </div>
+      `;
+      scoreInputs.innerHTML += `
+        <div>
+          <label>${name}</label>
+          <input type="number" id="score${idx}" value="0" />
+        </div>
+      `;
+    });
+  }
+
+  function submitScores() {
+    const roundScores = [];
+    let sum = 0;
+    for (let i = 0; i < 4; i++) {
+      const val = parseInt(document.getElementById("score"+i).value);
+      if (isNaN(val)) {
+        document.getElementById("scoreError").innerText = "Vui lòng nhập điểm hợp lệ cho tất cả người chơi.";
         return;
       }
-
-      for (let i = 0; i < 4; i++) {
-        scores[i] += roundScores[i];
-      }
-
-      history.push([...roundScores]);
-      document.getElementById("errorMsg").innerText = "";
-      ding.play();
-      updateTable();
-      updateHistory();
+      roundScores.push(val);
+      sum += val;
     }
 
-    function updateTable() {
-      const tbody = document.getElementById("scoreTable");
-      tbody.innerHTML = "";
-      players.forEach((name, i) => {
-        tbody.innerHTML += `<tr><td><img class="avatar" src="https://api.dicebear.com/7.x/thumbs/svg?seed=${name}"> ${name}</td><td>${scores[i]}</td></tr>`;
-      });
+    if (sum !== 0) {
+      document.getElementById("scoreError").innerText = "Tổng điểm 4 người phải bằng 0!";
+      return;
     }
 
-    function updateHistory() {
-      const tbody = document.getElementById("historyTable");
-      tbody.innerHTML = "";
-      history.forEach((round, idx) => {
-        let detail = round.map((s, i) => `${players[i]}: ${s > 0 ? '+' + s : s}`).join(" | ");
-        tbody.innerHTML += `<tr><td>Ván ${idx + 1}</td><td>${detail}</td></tr>`;
-      });
+    // update tổng điểm
+    for (let i = 0; i < 4; i++) {
+      totalScores[i] += roundScores[i];
     }
 
-    function resetGame() {
-      if (confirm("Bạn có chắc chắn muốn chơi lại từ đầu không?")) {
-        location.reload();
-      }
+    // hiển thị lịch sử
+    const log = document.getElementById("historyLog");
+    let html = "<div class='history-item'>";
+    for (let i = 0; i < 4; i++) {
+      html += `<strong>${players[i]}</strong>: ${roundScores[i]} | Tổng: ${totalScores[i]}<br/>`;
     }
-  </script>
+    html += "</div>";
+    log.innerHTML = html + log.innerHTML;
+
+    // reset input
+    for (let i = 0; i < 4; i++) {
+      document.getElementById("score"+i).value = 0;
+    }
+    document.getElementById("scoreError").innerText = "";
+
+    document.getElementById("successSound").play();
+  }
+</script>
 
 </body>
 </html>
