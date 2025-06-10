@@ -1,396 +1,279 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tái Tạo Năng Lượng</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #222;
-            color: #ddd;
-            transition: background-color 0.3s, color 0.3s;
-            overscroll-behavior: none;
-        }
-        body.light-mode {
-            background-color: #f0f0f0;
-            color: #333;
-        }
-        .container {
-            max-width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .header h1 {
-            font-size: 1.5em;
-            margin: 0;
-        }
-        .toggle-mode {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            font-size: 0.8em;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .toggle-mode:hover {
-            background: #0056b3;
-        }
-        .player-inputs {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(140px, 1fr));
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-        .player-card {
-            background: #333;
-            padding: 8px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(255,255,255,0.1);
-        }
-        body.light-mode .player-card {
-            background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .avatar-score {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-        .avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            font-size: 1.8em;
-            line-height: 50px;
-            text-align: center;
-            flex-shrink: 0;
-        }
-        .avatar.sad {
-            background: #dc3545;
-            content: "😢";
-        }
-        .avatar.normal {
-            background: #ccc;
-            content: "😐";
-        }
-        .avatar.happy {
-            background: #28a745;
-            content: "😊";
-        }
-        .total-score {
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-        .positive {
-            color: #28a745;
-        }
-        .negative {
-            color: #dc3545;
-        }
-        input[type="text"], input[type="number"] {
-            width: 100%;
-            padding: 12px;
-            margin: 5px 0;
-            border: 1px solid #555;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 1.2em;
-            text-align: center;
-            background-color: #2a2a2a;
-            color: #ddd;
-        }
-        body.light-mode input {
-            background: white;
-            border-color: #ccc;
-            color: #333;
-        }
-        .score-inputs {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(140px, 1fr));
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-        .button-group {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 15px;
-        }
-        button {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 8px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            max-width: 200px;
-            font-size: 0.9em;
-        }
-        button:hover {
-            background: #218838;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            font-size: 0.9em;
-        }
-        th, td {
-            border: 1px solid #555;
-            padding: 6px;
-            text-align: center;
-        }
-        body.light-mode th, body.light-mode td {
-            border-color: #ddd;
-        }
-        th {
-            background: #0056b3;
-            color: white;
-            font-size: 0.8em;
-        }
-        body.light-mode th {
-            background: #007bff;
-        }
-        td {
-            font-size: 0.8em;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: #333;
-            padding: 15px;
-            border-radius: 5px;
-            text-align: center;
-            max-width: 80%;
-        }
-        body.light-mode .modal-content {
-            background: white;
-            color: #333;
-        }
-        .modal-content button {
-            margin-top: 10px;
-        }
-        @media (max-width: 600px) {
-            .player-inputs, .score-inputs {
-                grid-template-columns: repeat(2, minmax(120px, 1fr));
-                gap: 6px;
-            }
-            .header h1 {
-                font-size: 1.2em;
-            }
-            .toggle-mode {
-                padding: 4px 8px;
-                font-size: 0.7em;
-            }
-            .avatar {
-                width: 40px;
-                height: 40px;
-                line-height: 40px;
-                font-size: 1.5em;
-            }
-            .total-score {
-                font-size: 1em;
-            }
-            .player-card {
-                padding: 6px;
-            }
-            input[type="text"], input[type="number"] {
-                font-size: 1.1em;
-                padding: 10px;
-            }
-            button {
-                padding: 6px;
-                font-size: 0.8em;
-            }
-            th, td {
-                padding: 4px;
-                font-size: 0.7em;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ghi Điểm</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Tái Tạo Năng Lượng</h1>
-            <button class="toggle-mode" onclick="toggleDarkMode()">Light Mode</button>
-        </div>
-        <div class="player-inputs">
-            <div class="player-card">
-                <div class="avatar-score">
-                    <div id="avatar1" class="avatar normal">😐</div>
-                    <div id="total1" class="total-score">0</div>
-                </div>
-                <input type="text" id="player1" placeholder="Tên người chơi 1" onchange="updateName(1)">
-            </div>
-            <div class="player-card">
-                <div class="avatar-score">
-                    <div id="avatar2" class="avatar normal">😐</div>
-                    <div id="total2" class="total-score">0</div>
-                </div>
-                <input type="text" id="player2" placeholder="Tên người chơi 2" onchange="updateName(2)">
-            </div>
-            <div class="player-card">
-                <div class="avatar-score">
-                    <div id="avatar3" class="avatar normal">😐</div>
-                    <div id="total3" class="total-score">0</div>
-                </div>
-                <input type="text" id="player3" placeholder="Tên người chơi 3" onchange="updateName(3)">
-            </div>
-            <div class="player-card">
-                <div class="avatar-score">
-                    <div id="avatar4" class="avatar normal">😐</div>
-                    <div id="total4" class="total-score">0</div>
-                </div>
-                <input type="text" id="player4" placeholder="Tên người chơi 4" onchange="updateName(4)">
-            </div>
-        </div>
-        <div class="score-inputs">
-            <div>
-                <input type="number" id="score1" placeholder="Điểm người chơi 1">
-            </div>
-            <div>
-                <input type="number" id="score2" placeholder="Điểm người chơi 2">
-            </div>
-            <div>
-                <input type="number" id="score3" placeholder="Điểm người chơi 3">
-            </div>
-            <div>
-                <input type="number" id="score4" placeholder="Điểm người chơi 4">
-            </div>
-        </div>
-        <div class="button-group">
-            <button onclick="addScores()">Thêm Ván</button>
-        </div>
-        <table id="history">
-            <thead>
-                <tr>
-                    <th>Ván</th>
-                    <th id="name1">Người chơi 1</th>
-                    <th id="name2">Người chơi 2</th>
-                    <th id="name3">Người chơi 3</th>
-                    <th id="name4">Người chơi 4</th>
-                </tr>
-            </thead>
-            <tbody id="history-body"></tbody>
-        </table>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-4">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl">
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-bold">Ghi Điểm</h1>
+      <button onclick="resetGame()" class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600">New Game</button>
     </div>
-    <div id="errorModal" class="modal">
-        <div class="modal-content">
-            <p>Tổng điểm của ván phải bằng 0!</p>
-            <button onclick="closeModal()">Đóng</button>
-        </div>
+
+    <!-- Màn hình chính -->
+    <div id="main-screen" class="space-y-4">
+      <button onclick="startNewGame()" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Bắt đầu</button>
     </div>
-    <script>
-        let players = ['', '', '', ''];
-        let totals = [0, 0, 0, 0];
-        let history = [];
 
-        function toggleDarkMode() {
-            document.body.classList.toggle('light-mode');
-            document.querySelector('.toggle-mode').textContent = 
-                document.body.classList.contains('light-mode') ? 'Dark Mode' : 'Light Mode';
-        }
+    <!-- Chọn số lượng người chơi -->
+    <div id="player-count-screen" class="hidden space-y-4">
+      <h2 class="text-lg font-semibold">Chọn số lượng người chơi</h2>
+      <input id="player-count" type="number" min="2" max="10" value="2" class="w-full p-2 border rounded">
+      <button onclick="goToPlayerNames()" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Tiếp tục</button>
+    </div>
 
-        function updateName(index) {
-            const input = document.getElementById(`player${index}`);
-            const name = input.value.trim();
-            const otherNames = players.filter((n, i) => i !== index - 1 && n !== '');
-            if (name && otherNames.includes(name)) {
-                alert('Tên người chơi đã tồn tại!');
-                input.value = players[index - 1];
-                return;
-            }
-            players[index - 1] = name;
-            document.getElementById(`name${index}`).textContent = name || `Người chơi ${index}`;
-            document.getElementById(`score${index}`).placeholder = `Điểm ${name || `người chơi ${index}`}`;
-        }
+    <!-- Nhập tên người chơi -->
+    <div id="player-names-screen" class="hidden space-y-4">
+      <h2 class="text-lg font-semibold">Nhập tên người chơi</h2>
+      <div id="player-names-inputs"></div>
+      <p id="name-error" class="text-red-500 hidden">Tên người chơi không được trùng nhau!</p>
+      <button onclick="goToModeSelect()" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Tiếp tục</button>
+    </div>
 
-        function updateAvatar(index) {
-            const score = totals[index - 1];
-            const avatarEl = document.getElementById(`avatar${index}`);
-            avatarEl.className = 'avatar';
-            if (score < 0) {
-                avatarEl.className += ' sad';
-                avatarEl.textContent = '😢';
-            } else if (score > 0) {
-                avatarEl.className += ' happy';
-                avatarEl.textContent = '😊';
-            } else {
-                avatarEl.className += ' normal';
-                avatarEl.textContent = '😐';
-            }
-        }
+    <!-- Chọn chế độ chơi -->
+    <div id="mode-select-screen" class="hidden space-y-4">
+      <h2 class="text-lg font-semibold">Chọn chế độ chơi</h2>
+      <select id="game-mode" class="w-full p-2 border rounded">
+        <option value="host">Có Host</option>
+        <option value="winner-takes-all">Nhất Ăn Hết</option>
+        <option value="normal">Bình Thường</option>
+      </select>
+      <div id="host-select" class="hidden">
+        <label class="block">Chọn Host:</label>
+        <select id="host-player" class="w-full p-2 border rounded"></select>
+      </div>
+      <button onclick="startGame()" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Bắt đầu</button>
+    </div>
 
-        function addScores() {
-            const scores = [
-                parseInt(document.getElementById('score1').value) || 0,
-                parseInt(document.getElementById('score2').value) || 0,
-                parseInt(document.getElementById('score3').value) || 0,
-                parseInt(document.getElementById('score4').value) || 0
-            ];
-            const sum = scores.reduce((a, b) => a + b, 0);
-            if (sum !== 0) {
-                document.getElementById('errorModal').style.display = 'flex';
-                return;
-            }
-            history.push(scores);
-            for (let i = 0; i < 4; i++) {
-                totals[i] += scores[i];
-                const totalEl = document.getElementById(`total${i + 1}`);
-                totalEl.textContent = totals[i];
-                totalEl.className = 'total-score ' + (totals[i] > 0 ? 'positive' : totals[i] < 0 ? 'negative' : '');
-                updateAvatar(i + 1);
-            }
-            updateHistory();
-            clearScoreInputs();
-        }
+    <!-- Ghi điểm -->
+    <div id="score-screen" class="hidden space-y-4">
+      <h2 class="text-lg font-semibold">Ghi điểm</h2>
+      <div id="total-scores" class="grid grid-cols-2 gap-2 mb-4"></div>
+      <div id="score-inputs"></div>
+      <p id="error-message" class="text-red-500 hidden">Tổng điểm phải bằng 0!</p>
+      <button onclick="submitScores()" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">Ghi điểm</button>
+      <button onclick="showScoreTable()" class="w-full bg-gray-500 text-white py-2 rounded hover:bg-gray-600">Xem bảng điểm</button>
+    </div>
 
-        function closeModal() {
-            document.getElementById('errorModal').style.display = 'none';
-        }
+    <!-- Bảng điểm -->
+    <div id="score-table-screen" class="hidden space-y-4">
+      <h2 class="text-lg font-semibold">Bảng điểm</h2>
+      <table class="w-full border-collapse border mb-4">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border p-2">Ván</th>
+            ${players.map(p => `<th class="border p-2">${p}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody id="score-table"></tbody>
+      </table>
+      <table class="w-full border-collapse border">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border p-2">Người chơi</th>
+            <th class="border p-2">Tổng điểm</th>
+          </tr>
+        </thead>
+        <tbody id="total-score-table"></tbody>
+      </table>
+      <button onclick="backToScoreScreen()" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Quay lại</button>
+    </div>
+  </div>
 
-        function clearScoreInputs() {
-            document.getElementById('score1').value = '';
-            document.getElementById('score2').value = '';
-            document.getElementById('score3').value = '';
-            document.getElementById('score4').value = '';
-        }
+  <script>
+    let players = [];
+    let scores = [];
+    let gameMode = '';
+    let hostIndex = -1;
+    let roundScoresHistory = [];
 
-        function updateHistory() {
-            const tbody = document.getElementById('history-body');
-            tbody.innerHTML = '';
-            history.forEach((scores, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td>${index + 1}</td>` + 
-                    scores.map(score => `<td class="${score > 0 ? 'positive' : score < 0 ? 'negative' : ''}">${score}</td>`).join('');
-                tbody.appendChild(row);
-            });
+    function startNewGame() {
+      document.getElementById('main-screen').classList.add('hidden');
+      document.getElementById('player-count-screen').classList.remove('hidden');
+    }
+
+    function goToPlayerNames() {
+      const playerCount = parseInt(document.getElementById('player-count').value);
+      if (playerCount < 2 || playerCount > 10) {
+        alert('Số lượng người chơi phải từ 2 đến 10!');
+        return;
+      }
+      players = [];
+      scores = [];
+      roundScoresHistory = [];
+      const inputsDiv = document.getElementById('player-names-inputs');
+      inputsDiv.innerHTML = '';
+      for (let i = 0; i < playerCount; i++) {
+        inputsDiv.innerHTML += `<input id="player-${i}" type="text" placeholder="Tên người chơi ${i + 1}" class="w-full p-2 border rounded mb-2">`;
+      }
+      document.getElementById('player-count-screen').classList.add('hidden');
+      document.getElementById('player-names-screen').classList.remove('hidden');
+    }
+
+    function goToModeSelect() {
+      players = [];
+      const nameSet = new Set();
+      for (let i = 0; i < document.getElementById('player-count').value; i++) {
+        const name = document.getElementById(`player-${i}`).value.trim();
+        if (!name) {
+          alert('Vui lòng nhập tên cho tất cả người chơi!');
+          return;
         }
-    </script>
+        if (nameSet.has(name)) {
+          document.getElementById('name-error').classList.remove('hidden');
+          return;
+        }
+        nameSet.add(name);
+        players.push(name);
+        scores.push(0);
+      }
+      document.getElementById('name-error').classList.add('hidden');
+      const hostSelect = document.getElementById('host-player');
+      hostSelect.innerHTML = players.map((p, i) => `<option value="${i}">${p}</option>`).join('');
+      document.getElementById('player-names-screen').classList.add('hidden');
+      document.getElementById('mode-select-screen').classList.remove('hidden');
+    }
+
+    function startGame() {
+      gameMode = document.getElementById('game-mode').value;
+      if (gameMode === 'host') {
+        document.getElementById('host-select').classList.remove('hidden');
+        hostIndex = parseInt(document.getElementById('host-player').value);
+      } else {
+        document.getElementById('host-select').classList.add('hidden');
+        hostIndex = -1;
+      }
+      renderScoreInputs();
+      renderTotalScores();
+      document.getElementById('mode-select-screen').classList.add('hidden');
+      document.getElementById('score-screen').classList.remove('hidden');
+    }
+
+    function renderTotalScores() {
+      const totalScoresDiv = document.getElementById('total-scores');
+      totalScoresDiv.innerHTML = players.map((p, i) => `
+        <div class="flex items-center space-x-2">
+          <span>${p}:</span>
+          <span class="${scores[i] >= 0 ? 'text-green-500' : 'text-red-500'}">
+            ${scores[i]} ${scores[i] >= 0 ? '😊' : '😢'}
+          </span>
+        </div>`).join('');
+    }
+
+    function renderScoreInputs() {
+      const inputsDiv = document.getElementById('score-inputs');
+      inputsDiv.innerHTML = '';
+      if (gameMode === 'host') {
+        players.forEach((player, i) => {
+          if (i !== hostIndex) {
+            inputsDiv.innerHTML += `
+              <div class="flex items-center space-x-2">
+                <label class="w-1/2">${player}:</label>
+                <input id="score-${i}" type="number" class="w-1/2 p-2 border rounded" value="0">
+              </div>`;
+          }
+        });
+      } else if (gameMode === 'winner-takes-all') {
+        inputsDiv.innerHTML = `
+          <div class="flex items-center space-x-2">
+            <label class="w-1/2">Người thắng:</label>
+            <select id="winner" class="w-1/2 p-2 border rounded">
+              ${players.map((p, i) => `<option value="${i}">${p}</option>`).join('')}
+            </select>
+          </div>
+          <div class="flex items-center space-x-2">
+            <label class="w-1/2">Điểm thắng:</label>
+            <input id="winner-score" type="number" class="w-1/2 p-2 border rounded" value="0">
+          </div>`;
+      } else {
+        players.forEach((player, i) => {
+          inputsDiv.innerHTML += `
+            <div class="flex items-center space-x-2">
+              <label class="w-1/2">${player}:</label>
+              <input id="score-${i}" type="number" class="w-1/2 p-2 border rounded" value="0">
+            </div>`;
+        });
+      }
+    }
+
+    function submitScores() {
+      let roundScores = new Array(players.length).fill(0);
+      if (gameMode === 'host') {
+        let total = 0;
+        players.forEach((_, i) => {
+          if (i !== hostIndex) {
+            const score = parseInt(document.getElementById(`score-${i}`).value) || 0;
+            roundScores[i] = score;
+            total += score;
+          }
+        });
+        roundScores[hostIndex] = -total;
+      } else if (gameMode === 'winner-takes-all') {
+        const winnerIndex = parseInt(document.getElementById('winner').value);
+        const winnerScore = parseInt(document.getElementById('winner-score').value) || 0;
+        const loserScore = -winnerScore / (players.length - 1);
+        players.forEach((_, i) => {
+          roundScores[i] = i === winnerIndex ? winnerScore : loserScore;
+        });
+      } else {
+        let total = 0;
+        players.forEach((_, i) => {
+          const score = parseInt(document.getElementById(`score-${i}`).value) || 0;
+          roundScores[i] = score;
+          total += score;
+        });
+        if (total !== 0) {
+          document.getElementById('error-message').classList.remove('hidden');
+          return;
+        }
+        document.getElementById('error-message').classList.add('hidden');
+      }
+      scores = scores.map((s, i) => s + roundScores[i]);
+      roundScoresHistory.push(roundScores.slice());
+      renderScoreInputs();
+      renderTotalScores();
+    }
+
+    function showScoreTable() {
+      const tableBody = document.getElementById('score-table');
+      tableBody.innerHTML = roundScoresHistory.map((round, i) => `
+        <tr>
+          <td class="border p-2">${i + 1}</td>
+          ${round.map(score => `
+            <td class="border p-2 ${score >= 0 ? 'text-green-500' : 'text-red-500'}">
+              ${score}
+            </td>`).join('')}
+        </tr>`).join('');
+      const totalTableBody = document.getElementById('total-score-table');
+      totalTableBody.innerHTML = players.map((p, i) => `
+        <tr>
+          <td class="border p-2">${p}</td>
+          <td class="border p-2 ${scores[i] >= 0 ? 'text-green-500' : 'text-red-500'}">
+            ${scores[i]} ${scores[i] >= 0 ? '😊' : '😢'}
+          </td>
+        </tr>`).join('');
+      document.getElementById('score-screen').classList.add('hidden');
+      document.getElementById('score-table-screen').classList.remove('hidden');
+    }
+
+    function backToScoreScreen() {
+      document.getElementById('score-table-screen').classList.add('hidden');
+      document.getElementById('score-screen').classList.remove('hidden');
+    }
+
+    function resetGame() {
+      document.getElementById('score-table-screen').classList.add('hidden');
+      document.getElementById('score-screen').classList.add('hidden');
+      document.getElementById('main-screen').classList.remove('hidden');
+      players = [];
+      scores = [];
+      roundScoresHistory = [];
+      gameMode = '';
+      hostIndex = -1;
+    }
+  </script>
 </body>
 </html>
