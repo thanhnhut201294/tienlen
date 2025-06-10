@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center p-4">
-  <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
     <div class="flex justify-between items-center mb-4">
       <h1 class="text-2xl font-bold">Ghi Điểm</h1>
       <button onclick="resetGame()" class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600">New Game</button>
@@ -36,7 +36,7 @@
     <!-- Chọn chế độ chơi -->
     <div id="mode-select-screen" class="hidden space-y-4">
       <h2 class="text-lg font-semibold">Chọn chế độ chơi</h2>
-      <select id="game-mode" class="w-full p-2 border rounded">
+      <select id="game-mode" class="w-full p-2 border rounded" onchange="toggleHostSelect()">
         <option value="host">Có Host</option>
         <option value="winner-takes-all">Nhất Ăn Hết</option>
         <option value="normal">Bình Thường</option>
@@ -44,6 +44,7 @@
       <div id="host-select" class="hidden">
         <label class="block">Chọn Host:</label>
         <select id="host-player" class="w-full p-2 border rounded"></select>
+        <p id="host-error" class="text-red-500 hidden">Vui lòng chọn Host!</p>
       </div>
       <button onclick="startGame()" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Bắt đầu</button>
     </div>
@@ -51,7 +52,6 @@
     <!-- Ghi điểm -->
     <div id="score-screen" class="hidden space-y-4">
       <h2 class="text-lg font-semibold">Ghi điểm</h2>
-      <div id="total-scores" class="grid grid-cols-2 gap-2 mb-4"></div>
       <div id="score-inputs"></div>
       <p id="error-message" class="text-red-500 hidden">Tổng điểm phải bằng 0!</p>
       <button onclick="submitScores()" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">Ghi điểm</button>
@@ -135,32 +135,34 @@
       hostSelect.innerHTML = players.map((p, i) => `<option value="${i}">${p}</option>`).join('');
       document.getElementById('player-names-screen').classList.add('hidden');
       document.getElementById('mode-select-screen').classList.remove('hidden');
+      toggleHostSelect();
+    }
+
+    function toggleHostSelect() {
+      const mode = document.getElementById('game-mode').value;
+      const hostSelect = document.getElementById('host-select');
+      if (mode === 'host') {
+        hostSelect.classList.remove('hidden');
+      } else {
+        hostSelect.classList.add('hidden');
+      }
     }
 
     function startGame() {
       gameMode = document.getElementById('game-mode').value;
       if (gameMode === 'host') {
-        document.getElementById('host-select').classList.remove('hidden');
         hostIndex = parseInt(document.getElementById('host-player').value);
+        if (isNaN(hostIndex)) {
+          document.getElementById('host-error').classList.remove('hidden');
+          return;
+        }
+        document.getElementById('host-error').classList.add('hidden');
       } else {
-        document.getElementById('host-select').classList.add('hidden');
         hostIndex = -1;
       }
       renderScoreInputs();
-      renderTotalScores();
       document.getElementById('mode-select-screen').classList.add('hidden');
       document.getElementById('score-screen').classList.remove('hidden');
-    }
-
-    function renderTotalScores() {
-      const totalScoresDiv = document.getElementById('total-scores');
-      totalScoresDiv.innerHTML = players.map((p, i) => `
-        <div class="flex items-center space-x-2">
-          <span>${p}:</span>
-          <span class="${scores[i] >= 0 ? 'text-green-500' : 'text-red-500'}">
-            ${scores[i]} ${scores[i] >= 0 ? '😊' : '😢'}
-          </span>
-        </div>`).join('');
     }
 
     function renderScoreInputs() {
@@ -234,7 +236,6 @@
       scores = scores.map((s, i) => s + roundScores[i]);
       roundScoresHistory.push(roundScores.slice());
       renderScoreInputs();
-      renderTotalScores();
     }
 
     function showScoreTable() {
@@ -252,7 +253,7 @@
         <tr>
           <td class="border p-2">${p}</td>
           <td class="border p-2 ${scores[i] >= 0 ? 'text-green-500' : 'text-red-500'}">
-            ${scores[i]} ${scores[i] >= 0 ? '😊' : '😢'}
+            ${scores[i]}
           </td>
         </tr>`).join('');
       document.getElementById('score-screen').classList.add('hidden');
